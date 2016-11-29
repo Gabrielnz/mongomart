@@ -211,18 +211,21 @@ function ItemDAO(database) {
 		 *
 		 */
 
-		var item = this.createDummyItem();
-		var items = [];
-		for (var i = 0; i < 5; i++) {
-			items.push(item);
-		}
+		 MongoClient.connect('mongodb://127.0.0.1:27017/mongomart', function(err, db) {
 
-		// TODO-lab2A Replace all code above (in this method).
+ 			assert.equal(err, null);
 
-		// TODO Include the following line in the appropriate
-		// place within your code to pass the items for the selected page
-		// of search results to the callback.
-		callback(items);
+ 			db.collection('item').find({$text: {$search: query}}).skip(page * itemsPerPage).limit(itemsPerPage).sort({"_id": 1}).toArray(
+ 				function(err, result) {
+ 					assert.equal(err, null);
+
+ 					db.close();
+
+					console.log(result);
+
+ 					callback(result);
+ 				});
+ 		});
 	}
 
 
