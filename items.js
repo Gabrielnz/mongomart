@@ -149,13 +149,6 @@ function ItemDAO(database) {
 
 					 db.close();
 
-//					 var pageItem = this.createDummyItem();
-//					 var pageItems = [];
-
-//					 for (var i = 0; i < 5; i++) {
-//						 pageItems.push(pageItem);
-//					 }
-
 					 // TODO-lab1B Replace all code above (in this method).
 
 					 // TODO Include the following line in the appropriate
@@ -170,26 +163,32 @@ function ItemDAO(database) {
 	this.getNumItems = function(category, callback) {
 		"use strict";
 
-		var numItems = 0;
+		MongoClient.connect('mongodb://127.0.0.1:27017/mongomart', function(err, db) {
 
-		/*
-		 * TODO-lab1C:
-		 *
-		 * LAB #1C: Implement the getNumItems method()
-		 *
-		 * Write a query that determines the number of items in a category
-		 * and pass the count to the callback function. The count is used in
-		 * the mongomart application for pagination. The category is passed
-		 * as a parameter to this method.
-		 *
-		 * See the route handler for the root path (i.e. "/") for an example
-		 * of a call to the getNumItems() method.
-		 *
-		 */
+			assert.equal(err, null);
 
-		// TODO Include the following line in the appropriate
-		// place within your code to pass the count to the callback.
-		callback(numItems);
+			var query;
+
+			if(category === "All"){
+				query = {};
+			}else{
+				query = {
+					"category" : category
+				};
+			}
+
+			db.collection('item').find(query).count(
+				function(err, result) {
+					assert.equal(err, null);
+
+					db.close();
+
+					console.log("número de items: ");
+					console.log(result);
+
+					callback(result);
+				});
+		});
 	}
 
 
