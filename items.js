@@ -149,11 +149,6 @@ function ItemDAO(database) {
 
 					 db.close();
 
-					 // TODO-lab1B Replace all code above (in this method).
-
-					 // TODO Include the following line in the appropriate
-					 // place within your code to pass the items for the selected page
-					 // to the callback.
 					 callback(result);
 				 });
 		 });
@@ -182,9 +177,6 @@ function ItemDAO(database) {
 					assert.equal(err, null);
 
 					db.close();
-
-					console.log("número de items: ");
-					console.log(result);
 
 					callback(result);
 				});
