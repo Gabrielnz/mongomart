@@ -232,24 +232,22 @@ function ItemDAO(database) {
 	this.getNumSearchItems = function(query, callback) {
 		"use strict";
 
-		var numItems = 0;
+		MongoClient.connect('mongodb://127.0.0.1:27017/mongomart', function(err, db) {
 
-		/*
-		 * TODO-lab2B
-		 *
-		 * LAB #2B: Using the value of the query parameter passed to this
-		 * method, count the number of items in the "item" collection matching
-		 * a text search. Pass the count to the callback function.
-		 *
-		 * getNumSearchItems() depends on the same text index as searchItems().
-		 * Before implementing this method, ensure that you've already created
-		 * a SINGLE text index on title, slogan, and description. You should
-		 * simply do this in the mongo shell.
-		 */
+		 assert.equal(err, null);
 
-		callback(numItems);
+		 db.collection('item').find({$text: {$search: query}}).count(
+			 function(err, result) {
+				 assert.equal(err, null);
+
+				 db.close();
+
+				 console.log(result);
+
+				 callback(result);
+			 });
+	 });
 	}
-
 
 	this.getItem = function(itemId, callback) {
 		"use strict";
