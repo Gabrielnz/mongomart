@@ -55,7 +55,6 @@ function ItemDAO(database) {
 		MongoClient.connect('mongodb://127.0.0.1:27017/mongomart', function(err, db) {
 
 			assert.equal(err, null);
-			console.log("Successfully connected to MongoDB.");
 
 			db.collection('item').aggregate(
 				[{
@@ -119,7 +118,7 @@ function ItemDAO(database) {
 		 * The category is passed as a parameter to getItems().
 		 *
 		 * Use sort(), skip(), and limit() and the method parameters: page and
-		 * itemsPerPage to identify the appropriate products to display on each
+		 * itemsPderPage to identify the appropriate products to display on each
 		 * page. Pass these items to the callback function.
 		 *
 		 * Sort items in ascending order based on the _id field. You must use
@@ -130,19 +129,41 @@ function ItemDAO(database) {
 		 * than you do for other categories.
 		 *
 		 */
+		 MongoClient.connect('mongodb://127.0.0.1:27017/mongomart', function(err, db) {
 
-		var pageItem = this.createDummyItem();
-		var pageItems = [];
-		for (var i = 0; i < 5; i++) {
-			pageItems.push(pageItem);
-		}
+			 assert.equal(err, null);
 
-		// TODO-lab1B Replace all code above (in this method).
+			 var query;
 
-		// TODO Include the following line in the appropriate
-		// place within your code to pass the items for the selected page
-		// to the callback.
-		callback(pageItems);
+			 if(category === "All"){
+				 query = {};
+			 }else{
+				 query = {
+					 "category" : category
+				 };
+			 }
+
+			 db.collection('item').find(query).skip(page * itemsPerPage).limit(itemsPerPage).sort({"_id": 1}).toArray(
+				 function(err, result) {
+					 assert.equal(err, null);
+
+					 db.close();
+
+//					 var pageItem = this.createDummyItem();
+//					 var pageItems = [];
+
+//					 for (var i = 0; i < 5; i++) {
+//						 pageItems.push(pageItem);
+//					 }
+
+					 // TODO-lab1B Replace all code above (in this method).
+
+					 // TODO Include the following line in the appropriate
+					 // place within your code to pass the items for the selected page
+					 // to the callback.
+					 callback(result);
+				 });
+		 });
 	}
 
 
