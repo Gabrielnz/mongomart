@@ -242,8 +242,6 @@ function ItemDAO(database) {
 
 				 db.close();
 
-				 console.log(result);
-
 				 callback(result);
 			 });
 	 });
@@ -262,14 +260,21 @@ function ItemDAO(database) {
 		 *
 		 */
 
-		var item = this.createDummyItem();
+		MongoClient.connect('mongodb://127.0.0.1:27017/mongomart', function(err, db) {
 
-		// TODO-lab3 Replace all code above (in this method).
+		 assert.equal(err, null);
 
-		// TODO Include the following line in the appropriate
-		// place within your code to pass the matching item
-		// to the callback.
-		callback(item);
+		 db.collection('item').find({ _id: itemId }).toArray(
+			 function(err, result) {
+				 assert.equal(err, null);
+
+				 db.close();
+
+				 console.log(result);
+
+				 callback(result[0]);
+			 });
+	 });
 	}
 
 
