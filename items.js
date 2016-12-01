@@ -83,7 +83,7 @@ function ItemDAO(database) {
 					var sum = 0;
 
 					categories.forEach(function(cat) {
-						sum+= cat.num;
+						sum += cat.num;
 					});
 
 
@@ -129,29 +129,31 @@ function ItemDAO(database) {
 		 * than you do for other categories.
 		 *
 		 */
-		 MongoClient.connect('mongodb://127.0.0.1:27017/mongomart', function(err, db) {
+		MongoClient.connect('mongodb://127.0.0.1:27017/mongomart', function(err, db) {
 
-			 assert.equal(err, null);
+			assert.equal(err, null);
 
-			 var query;
+			var query;
 
-			 if(category === "All"){
-				 query = {};
-			 }else{
-				 query = {
-					 "category" : category
-				 };
-			 }
+			if (category === "All") {
+				query = {};
+			} else {
+				query = {
+					"category": category
+				};
+			}
 
-			 db.collection('item').find(query).skip(page * itemsPerPage).limit(itemsPerPage).sort({"_id": 1}).toArray(
-				 function(err, result) {
-					 assert.equal(err, null);
+			db.collection('item').find(query).skip(page * itemsPerPage).limit(itemsPerPage).sort({
+				"_id": 1
+			}).toArray(
+				function(err, result) {
+					assert.equal(err, null);
 
-					 db.close();
+					db.close();
 
-					 callback(result);
-				 });
-		 });
+					callback(result);
+				});
+		});
 	}
 
 
@@ -164,11 +166,11 @@ function ItemDAO(database) {
 
 			var query;
 
-			if(category === "All"){
+			if (category === "All") {
 				query = {};
-			}else{
+			} else {
 				query = {
-					"category" : category
+					"category": category
 				};
 			}
 
@@ -211,21 +213,25 @@ function ItemDAO(database) {
 		 *
 		 */
 
-		 MongoClient.connect('mongodb://127.0.0.1:27017/mongomart', function(err, db) {
+		MongoClient.connect('mongodb://127.0.0.1:27017/mongomart', function(err, db) {
 
- 			assert.equal(err, null);
+			assert.equal(err, null);
 
- 			db.collection('item').find({$text: {$search: query}}).skip(page * itemsPerPage).limit(itemsPerPage).sort({"_id": 1}).toArray(
- 				function(err, result) {
- 					assert.equal(err, null);
+			db.collection('item').find({
+				$text: {
+					$search: query
+				}
+			}).skip(page * itemsPerPage).limit(itemsPerPage).sort({
+				"_id": 1
+			}).toArray(
+				function(err, result) {
+					assert.equal(err, null);
 
- 					db.close();
+					db.close();
 
-					console.log(result);
-
- 					callback(result);
- 				});
- 		});
+					callback(result);
+				});
+		});
 	}
 
 
@@ -234,17 +240,21 @@ function ItemDAO(database) {
 
 		MongoClient.connect('mongodb://127.0.0.1:27017/mongomart', function(err, db) {
 
-		 assert.equal(err, null);
+			assert.equal(err, null);
 
-		 db.collection('item').find({$text: {$search: query}}).count(
-			 function(err, result) {
-				 assert.equal(err, null);
+			db.collection('item').find({
+				$text: {
+					$search: query
+				}
+			}).count(
+				function(err, result) {
+					assert.equal(err, null);
 
-				 db.close();
+					db.close();
 
-				 callback(result);
-			 });
-	 });
+					callback(result);
+				});
+		});
 	}
 
 	this.getItem = function(itemId, callback) {
@@ -262,19 +272,19 @@ function ItemDAO(database) {
 
 		MongoClient.connect('mongodb://127.0.0.1:27017/mongomart', function(err, db) {
 
-		 assert.equal(err, null);
+			assert.equal(err, null);
 
-		 db.collection('item').find({ _id: itemId }).toArray(
-			 function(err, result) {
-				 assert.equal(err, null);
+			db.collection('item').find({
+				_id: itemId
+			}).toArray(
+				function(err, result) {
+					assert.equal(err, null);
 
-				 db.close();
+					db.close();
 
-				 console.log(result);
-
-				 callback(result[0]);
-			 });
-	 });
+					callback(result[0]);
+				});
+		});
 	}
 
 
@@ -305,22 +315,23 @@ function ItemDAO(database) {
 		 *
 		 */
 
-		var reviewDoc = {
-			name: name,
-			comment: comment,
-			stars: stars,
-			date: Date.now()
-		}
+		this.db.collection('item').update({
+			_id: itemId
+		}, {
+			$addToSet: {
+				reviews: {
+					name: name,
+					comment: comment,
+					stars: stars,
+					date: Date.now()
+				}
+			}
+		}, function(err, doc){
 
-		// TODO replace the following two lines with your code that will
-		// update the document with a new review.
-		var doc = this.createDummyItem();
-		doc.reviews = [reviewDoc];
+			assert.equal(err, null);
 
-		// TODO Include the following line in the appropriate
-		// place within your code to pass the updated doc to the
-		// callback.
-		callback(doc);
+			callback(doc);
+		});
 	}
 
 
